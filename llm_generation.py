@@ -77,7 +77,7 @@ def process(text: str = Query(..., description="Prompt to run on")):
                 agent_name, agent_prompt = prompt['agent'], prompt['prompt']
                 model_desc = agent_dict[agent_name]
                 
-                yield f"data: {json.dumps({"progress": f"{i+1}/{n}"})}\n\n"
+                
                 
                 client = InferenceClient("Qwen/Qwen3-235B-A22B")
                 
@@ -91,6 +91,7 @@ def process(text: str = Query(..., description="Prompt to run on")):
                     max_tokens=2000,
                     temperature=0.7,
                 )
+                yield f"data: {json.dumps({"progress": f"{i+1}/{n}"})}\n\n"
                 data[i]['output'] = agent_response.choices[0].message["content"]
         
             yield f"data: {json.dumps({"progress": "done", "result": data})}\n\n"
