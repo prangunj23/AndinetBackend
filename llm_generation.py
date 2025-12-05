@@ -11,7 +11,7 @@ from huggingface_hub import login, InferenceClient
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080"],         # or ["http://localhost:8080"]
+    allow_origins=["*"],         # or ["http://localhost:8080"]
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
