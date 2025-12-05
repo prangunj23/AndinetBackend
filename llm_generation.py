@@ -16,7 +16,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-login(os.getenv(HUGGINGFACE_KEY))
+login(os.getenv("HUGGINGFACE_KEY"))
 
 class Input(BaseModel):
     text: str
