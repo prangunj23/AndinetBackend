@@ -75,6 +75,8 @@ def process(text: str = Query(..., description="Prompt to run on")):
             for i in range(n):
                 prompt = data[i]
                 agent_name, agent_prompt = prompt['agent'], prompt['prompt']
+                print(f'{i+1}/{n}')
+                print(agent_name)
                 model_desc = agent_dict[agent_name]
                 
                 
