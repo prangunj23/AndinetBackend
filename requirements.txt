@@ -4,3 +4,4 @@ pydantic
 huggingface_hub
 cerebras_cloud_sdk
 python-dotenv
+google-genai

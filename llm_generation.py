@@ -5,6 +5,8 @@ from fastapi import FastAPI, Query
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
+from google import genai
+from pydantic import BaseModel
 
 from cerebras.cloud.sdk import Cerebras
 
@@ -18,6 +20,12 @@ if not CEREBRAS_API_KEY:
     raise ValueError("CEREBRAS_API_KEY not found in .env")
 
 cerebras = Cerebras(api_key=CEREBRAS_API_KEY)
+
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+if not GEMINI_API_KEY:
+    raise ValueError("GEMINI_API_KEY not found in .env")
+
+client = genai.Client(api_key=GEMINI_API_KEY)
 
 # ======================================================
 # FASTAPI
@@ -142,3 +150,23 @@ def process(text: str = Query(..., description="Prompt to run on")):
             yield f"data: {json.dumps({'error': str(e), 'raw_output': output})}\n\n"
 
     return StreamingResponse(event_generator(), media_type="text/event-stream")
+
+class ChatRequest(BaseModel):
+    message: str
+    context: str | None = None
+
+@app.post("/chat")
+def chat(req: ChatRequest):
+    response = client.models.generate_content(
+        model="gemini-2.5-flash-lite",
+        contents=f"""
+                    You are a helpful pipeline assistant.
+
+                    Context:
+                    {req.context or "None"}
+
+                    User:
+                    {req.message}
+                    """,
+    )
+    return {"message": response.text}
